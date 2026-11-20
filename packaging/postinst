@@ -1,11 +1,15 @@
 #!/bin/sh
 set -e
-# The app draws on /dev/fb0 and reads /dev/input: let the launcher's user do so.
-for grp in video input; do
-    if getent group "$grp" >/dev/null && id -u pi >/dev/null 2>&1; then
-        usermod -aG "$grp" pi || true
-    fi
-done
+# The app draws on /dev/fb0 and reads /dev/input: let the device's main
+# user (uid 1000: "zero" on CardputerZero images, "pi" on older ones) do so.
+user=$(getent passwd 1000 | cut -d: -f1)
+if [ -n "$user" ]; then
+    for grp in video input; do
+        if getent group "$grp" >/dev/null; then
+            usermod -aG "$grp" "$user" || true
+        fi
+    done
+fi
 # Our commands in /etc/musegadget/commands.d are read when the service starts.
 if [ -d /run/systemd/system ] && systemctl list-unit-files musegadget.service >/dev/null 2>&1; then
     systemctl try-restart musegadget.service || true

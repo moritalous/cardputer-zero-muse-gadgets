@@ -7,7 +7,7 @@
 - CardputerZero（Wi-Fi に接続済み）
 - Muse アプリ（iOS / Android）にログイン済みのスマホ
 - SDK トークン: [gadgets.muse.ai → Account → SDK tokens](https://gadgets.muse.ai/settings/sdk-tokens) で発行（`mgst_…`）。先に [SDK Terms](https://gadgets.muse.ai/sdk-terms) を確認してください
-- CardputerZero の「Settings」で SSH を有効にし、Mac から `ssh pi@<CardputerZeroのIP>` で入れる状態にする
+- CardputerZero の「Settings」で SSH を有効にし、Mac から `ssh zero@<CardputerZeroのIP>` で入れる状態にする
 
 ## 1. 実機の状態を確認する
 
@@ -20,11 +20,19 @@ groups
 
 **報告してほしいもの:** 4 つのコマンドの出力（特に `bluetoothctl show` の `Powered:` と `Roles:` / `LE` の有無）
 
+`Powered: no` / `PowerState: off-blocked` のときは Bluetooth が rfkill で止められています。次で有効にします:
+
+```bash
+sudo rfkill unblock bluetooth
+bluetoothctl power on
+bluetoothctl show | grep -E "Powered|PowerState"   # Powered: yes / PowerState: on になれば OK
+```
+
 > Muse SDK のペアリングは Bluetooth LE を使います。ここで BLE が使えないと分かった場合は、別の方法（他の Linux 機でペアリングして状態をコピーする方法が SDK のドキュメントにあります）を検討します。
 
 ## 2. Muse Gadgets SDK を入れてペアリングする
 
-`pi` ユーザーで実行してください（Muse から実行されるコマンドがこのユーザー権限で動きます。アプリもこのユーザーのグループでサービスのソケットに接続します）。
+ログインユーザー（CardputerZero の標準イメージでは `zero`）で実行してください（Muse から実行されるコマンドがこのユーザー権限で動きます。アプリもこのユーザーのグループでサービスのソケットに接続します）。
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/facebookincubator/muse-gadget-sdk/main/linux/install.sh -o install.sh
@@ -69,7 +77,7 @@ Mac でビルドして転送します:
 ```bash
 cd cardputer-zero-muse-gadgets
 uv run scripts/build_deb.py
-scp dist/cz-muse-gadget_0.1.0_arm64.deb pi@<CardputerZeroのIP>:/tmp/
+scp dist/cz-muse-gadget_0.1.0_arm64.deb zero@<CardputerZeroのIP>:/tmp/
 ```
 
 CardputerZero で（`apt` 経由で入れると、依存パッケージ（Pillow・numpy・日本語フォント）も一緒に入ります）:
@@ -79,7 +87,7 @@ sudo apt install /tmp/cz-muse-gadget_0.1.0_arm64.deb
 sudo journalctl -u musegadget | grep -i commands   # cardputer.screen.show などが読み込まれたか
 ```
 
-インストール時に `pi` を `video` / `input` グループに追加するので、**一度再起動**してください。
+インストール時にログインユーザー（uid 1000）を `video` / `input` グループに追加するので、**一度再起動**してください。
 
 ## 4. 起動して試す
 
