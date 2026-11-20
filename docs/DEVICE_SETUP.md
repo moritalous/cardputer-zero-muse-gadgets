@@ -89,6 +89,17 @@ sudo journalctl -u musegadget | grep -i commands   # cardputer.screen.show な�
 
 インストール時にログインユーザー（uid 1000）を `video` / `input` グループに追加するので、**一度再起動**してください。
 
+### GitHub Releases から直接入れる（Mac を使わない方法）
+
+タグ `v*` を push すると、GitHub Actions が `.deb` を作って Releases に添付します。CardputerZero で:
+
+```bash
+curl -fL -o ~/cz-muse-gadget_arm64.deb https://github.com/moritalous/cardputer-zero-muse-gadgets/releases/latest/download/cz-muse-gadget_arm64.deb
+sudo apt install ~/cz-muse-gadget_arm64.deb
+```
+
+（`/tmp` は 177MB の RAM 領域なので、ダウンロード先はホームにしています）
+
 ## 4. 起動して試す
 
 ランチャーから「Muse Gadget」を開きます。うまく開かない場合は、SSH から直接起動してログを見ます:
