@@ -86,8 +86,10 @@ def build(output_dir: Path) -> Path:
         data.add(f"{app_dir}/czmuse/{src.name}", src.read_bytes())
     data.add(f"/{PREFIX}/bin/{bin_name}", (
         "#!/bin/sh\n"
-        "# Launched by APPLaunch. Logs go to /tmp/czmuse.log for troubleshooting.\n"
+        "# Launched by APPLaunch. Logs go to /tmp/czmuse.log for troubleshooting;\n"
+        "# run from a terminal, they go to the terminal instead.\n"
         f"export PYTHONPATH={app_dir}\n"
+        'if [ -t 2 ]; then exec python3 -m czmuse "$@"; fi\n'
         'exec python3 -m czmuse "$@" 2>>/tmp/czmuse.log\n').encode(), 0o755)
     data.add(f"/{PREFIX}/bin/czmuse-command", (
         "#!/bin/sh\n"

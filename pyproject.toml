@@ -1,6 +1,6 @@
 [project]
 name = "czmuse"
-version = "0.1.0"
+version = "0.1.1"
 description = "Muse Gadget front-end for M5Stack CardputerZero (320x170 framebuffer + keyboard)"
 readme = "README.md"
 license = "MIT"

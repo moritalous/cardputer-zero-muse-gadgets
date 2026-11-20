@@ -164,9 +164,11 @@ class FramebufferDisplay:
                 _s, _u, etype, code, value = struct.unpack(_EV_FMT, data[off:off + _EV_SIZE])
                 if etype != _EV_KEY:
                     continue
-                if self._debug_keys and value == 1:
-                    print(f"czmuse: key code={code}", file=sys.stderr)
                 event = self._translator.feed(code, value)
+                if self._debug_keys and value == 1:
+                    what = "modifier" if event is None else (
+                        repr(event.char) if event.name == "char" else event.name)
+                    print(f"czmuse: key code={code} -> {what}", file=sys.stderr, flush=True)
                 if event is not None:
                     events.append(event)
         return events

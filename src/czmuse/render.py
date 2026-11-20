@@ -163,7 +163,7 @@ class Renderer:
         d.line([0, box_top, w, box_top], fill=(50, 56, 78))
         y = box_top + 3
         if not state.input_text and not state.pending:
-            hint = "メッセージを入力  Tab:あ/A  ?:ヘルプ"
+            hint = "メッセージを入力  TAB:あ/A  fn+H:ヘルプ"
             d.text((6, y), "▏", font=self.font, fill=FG)
             d.text((14, y + 1), hint, font=self.small, fill=DIM)
         else:
@@ -217,12 +217,13 @@ class Renderer:
     def _draw_help(self, d: ImageDraw.ImageDraw) -> None:
         w, h = self.size
         rows = [
-            ("Enter", "送信"),
-            ("Tab", "英数 ⇄ ローマ字かな"),
-            ("↑ ↓", "スクロール"),
-            ("Ctrl+L", "表示をクリア"),
-            ("Esc", "入力を消す / 閉じる"),
-            ("Ctrl+Q", "終了"),
+            ("OK", "送信"),
+            ("TAB", "英数 ⇄ ローマ字かな"),
+            ("fn+F/X", "スクロール ▲▼"),
+            ("fn+L/M", "ページ送り"),
+            ("ctrl+L", "表示をクリア"),
+            ("ESC", "入力を消す / 閉じる"),
+            ("ctrl+Q", "終了"),
         ]
         d.rounded_rectangle([20, 18, w - 20, h - 8], radius=6, fill=(16, 18, 30), outline=ACCENT)
         y = 24

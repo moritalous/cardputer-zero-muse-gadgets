@@ -141,7 +141,7 @@ class ChatApp:
         if self.help_visible:
             self.help_visible = False
             return
-        if ev.ctrl and ev.char in ("h", "H"):
+        if ev.name == "help" or (ev.ctrl and ev.char in ("h", "H")):
             self.help_visible = True
             return
         if ev.ctrl and ev.char in ("l", "L"):

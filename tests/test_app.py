@@ -182,3 +182,21 @@ def test_notify_roundtrip(sock_dir):
         server.close()
     assert got == [{"op": "ping"}]
     assert not path.exists()
+
+
+def test_cardputer_zero_keycodes():
+    """Codes reported by a real CardputerZero (fn=389, sym=383, fn+H=138, sym+M=93)."""
+    t = KeyTranslator()
+    assert t.feed(389, 1) is None          # fn alone
+    assert t.feed(103, 1).name == "up"     # fn+F
+    assert t.feed(389, 0) is None
+    assert t.feed(138, 1).name == "help"   # fn+H
+    assert t.feed(383, 1) is None          # sym alone
+    assert t.feed(93, 1).char == "?"       # sym+M
+
+
+def test_help_key_opens_help():
+    display = HeadlessDisplay([KeyEvent("help")])
+    app = ChatApp(display, FakeMuse())
+    app.tick(0.01)
+    assert app.help_visible

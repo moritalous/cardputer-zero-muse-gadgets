@@ -45,20 +45,27 @@ CHAR_KEYS = {
     44: ("z", "Z"), 45: ("x", "X"), 46: ("c", "C"), 47: ("v", "V"), 48: ("b", "B"),
     49: ("n", "N"), 50: ("m", "M"), 51: (",", "<"), 52: (".", ">"), 53: ("/", "?"),
     57: (" ", " "),
+    # CardputerZero sym layer (reported by the TCA8418 keymap with these codes)
+    93: ("?", "?"),      # sym+M
 }
 
 SPECIAL_KEYS = {
     1: "esc", 14: "backspace", 15: "tab", 28: "enter", 96: "enter",
     102: "home", 103: "up", 104: "pageup", 105: "left", 106: "right",
     107: "end", 108: "down", 109: "pagedown", 111: "delete",
+    138: "help",          # fn+H on CardputerZero
 }
 
 SHIFT_CODES = {42, 54}
 CTRL_CODES = {29, 97}
 ALT_CODES = {56, 100}
 CAPSLOCK = 58
+# CardputerZero layer keys: fn (389) and sym (383); the kernel keymap
+# already applies them (fn+F arrives as KEY_UP), so they are just ignored.
+FN_CODES = {389, 464}
+SYM_CODES = {383}
 # Pure modifiers that never produce an event of their own.
-MODIFIER_CODES = SHIFT_CODES | CTRL_CODES | ALT_CODES | {CAPSLOCK, 125, 126, 464}
+MODIFIER_CODES = SHIFT_CODES | CTRL_CODES | ALT_CODES | FN_CODES | SYM_CODES | {CAPSLOCK, 125, 126}
 
 
 class KeyTranslator:
