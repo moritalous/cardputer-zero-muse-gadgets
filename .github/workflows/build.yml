@@ -1,0 +1,39 @@
+name: test-and-build-deb
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Test (Python 3.9 = oldest device Python, and latest)
+        run: |
+          uv run --python 3.9 pytest -q
+          uv run --python 3.13 pytest -q
+      - name: Build .deb
+        run: uv run scripts/build_deb.py
+      - name: Check the .deb with dpkg
+        run: |
+          deb=$(ls dist/*.deb)
+          dpkg-deb --info "$deb"
+          dpkg-deb --contents "$deb"
+          python3 -m py_compile src/czmuse/*.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cz-muse-gadget-deb
+          path: dist/*.deb
+      - name: Attach to release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" dist/*.deb --generate-notes || gh release upload "$GITHUB_REF_NAME" dist/*.deb --clobber

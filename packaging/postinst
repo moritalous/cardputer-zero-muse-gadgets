@@ -1,0 +1,13 @@
+#!/bin/sh
+set -e
+# The app draws on /dev/fb0 and reads /dev/input: let the launcher's user do so.
+for grp in video input; do
+    if getent group "$grp" >/dev/null && id -u pi >/dev/null 2>&1; then
+        usermod -aG "$grp" pi || true
+    fi
+done
+# Our commands in /etc/musegadget/commands.d are read when the service starts.
+if [ -d /run/systemd/system ] && systemctl list-unit-files musegadget.service >/dev/null 2>&1; then
+    systemctl try-restart musegadget.service || true
+fi
+exit 0

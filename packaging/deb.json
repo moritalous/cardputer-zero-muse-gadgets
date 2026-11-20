@@ -1,0 +1,6 @@
+{
+  "depends": "python3 (>= 3.9), python3-pil, python3-numpy, fonts-noto-cjk",
+  "maintainer": "moritalous <moritalous@users.noreply.github.com>",
+  "homepage": "https://github.com/moritalous/cardputer-zero-muse-gadgets",
+  "section": "APPLaunch"
+}

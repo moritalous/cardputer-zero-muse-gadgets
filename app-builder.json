@@ -1,0 +1,26 @@
+{
+  "package_name": "cz-muse-gadget",
+  "version": "0.1.0",
+  "app_name": "Muse Gadget",
+  "bin_name": "cz-muse-gadget",
+  "description": "Chat with your Muse from the CardputerZero keyboard and screen",
+  "store": {
+    "summary": "Chat with Meta's Muse from your CardputerZero (Muse Gadgets SDK)",
+    "description": "A Muse Gadget front-end for CardputerZero. Type on the keyboard (with a built-in romaji-to-kana mode), read Muse's replies on the 320x170 screen, and let Muse pop up messages on the device. Requires the Muse Gadgets Linux SDK (musegadget service) installed and paired with your own SDK token. Not affiliated with or endorsed by Meta or M5Stack.",
+    "categories": ["AI", "Lifestyle"],
+    "screenshots": ["screenshots/chat.png", "screenshots/notice.png", "screenshots/help.png"],
+    "icon": "packaging/icon.png",
+    "license": "MIT",
+    "source_repo": "https://github.com/moritalous/cardputer-zero-muse-gadgets",
+    "author": {"github": "moritalous", "display_name": "moritalous"},
+    "share_code": "MUSG",
+    "permissions": {
+      "camera": false, "microphone": false, "imu": false, "network": true,
+      "additional_hardware": false, "background_service": false,
+      "external_display": false
+    },
+    "locales": {
+      "ja": {"title": "Muse Gadget", "summary": "CardputerZero から Meta の Muse とチャット（Muse Gadgets SDK）"}
+    }
+  }
+}

@@ -1,0 +1,26 @@
+[project]
+name = "czmuse"
+version = "0.1.0"
+description = "Muse Gadget front-end for M5Stack CardputerZero (320x170 framebuffer + keyboard)"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.9"
+# On the device these come from apt (python3-pil, python3-numpy), not pip.
+dependencies = ["pillow>=9.4"]
+
+[project.optional-dependencies]
+fast = ["numpy>=1.24"]
+
+[project.scripts]
+czmuse = "czmuse.__main__:main"
+czmuse-command = "czmuse.command:main"
+
+[dependency-groups]
+dev = ["pytest>=8"]
+
+[build-system]
+requires = ["uv_build>=0.9,<0.14"]
+build-backend = "uv_build"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
