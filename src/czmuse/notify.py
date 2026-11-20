@@ -14,7 +14,25 @@ import threading
 from pathlib import Path
 from typing import Callable, Optional
 
-DEFAULT_NOTIFY_SOCKET = Path(os.environ.get("CZMUSE_NOTIFY_SOCKET", "/tmp/czmuse-notify.sock"))
+def default_socket_path() -> Path:
+    """Where the UI listens: the same answer for the UI and for the command
+    helper, as long as both run as the same account.
+
+    ``/run/user/<uid>`` is preferred over ``/tmp``: an app launched by
+    APPLaunch may get a private ``/tmp`` that the musegadget service's
+    commands never see, while ``/run/user`` is shared.
+    """
+    override = os.environ.get("CZMUSE_NOTIFY_SOCKET")
+    if override:
+        return Path(override)
+    uid = os.getuid()
+    runtime = Path(f"/run/user/{uid}")
+    if runtime.is_dir() and os.access(runtime, os.W_OK | os.X_OK):
+        return runtime / "czmuse-notify.sock"
+    return Path(f"/tmp/czmuse-notify-{uid}.sock")
+
+
+DEFAULT_NOTIFY_SOCKET = default_socket_path()
 MAX_REQUEST = 64 * 1024
 
 
@@ -31,16 +49,17 @@ class NotifyServer:
         self._sock: Optional[socket.socket] = None
         self._thread: Optional[threading.Thread] = None
         self._stop = threading.Event()
+        self._inode = None
 
     def start(self) -> None:
         if self.path.exists() or self.path.is_symlink():
             self.path.unlink()
         sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         sock.bind(str(self.path))
-        # The command helper runs as musegadget's run-as account, which may
-        # differ from the account that launched the UI. Requests only put
-        # text on this screen, so any local account may send them.
-        os.chmod(self.path, 0o666)
+        # The command helper runs as musegadget's run-as account, the same
+        # account APPLaunch starts the UI as, so only the owner needs access.
+        os.chmod(self.path, 0o600)
+        self._inode = os.stat(self.path).st_ino
         sock.listen(4)
         sock.settimeout(0.5)
         self._sock = sock
@@ -77,8 +96,11 @@ class NotifyServer:
             self._sock.close()
         if self._thread is not None:
             self._thread.join(timeout=2)
+        # Remove the socket only if it is still ours: a newer instance of the
+        # app may have replaced it, and must keep receiving commands.
         try:
-            self.path.unlink()
+            if self._inode is not None and os.stat(self.path).st_ino == self._inode:
+                self.path.unlink()
         except OSError:
             pass
 

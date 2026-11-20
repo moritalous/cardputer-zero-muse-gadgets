@@ -1,8 +1,14 @@
 {
-  "description": "Show a short message as a pop-up on the CardputerZero's 320x170 screen (the Muse Gadget app must be open). Use it for reminders, notices or anything the owner should see on the device. Japanese is fine. Keep it under about 120 characters.",
-  "exec": ["/usr/share/APPLaunch/bin/czmuse-command", "screen.show"],
+  "description": "Show a message as a pop-up on the CardputerZero's own screen (320x170 LCD). This is the ONLY way to put text on that screen: system.run cannot draw on it (the display is a framebuffer owned by the Muse Gadget app, not a terminal). Use it whenever the owner asks to show, display, notify or put something on the CardputerZero / device screen. The Muse Gadget app must be open. Japanese is fine; keep it under about 120 characters.",
+  "exec": [
+    "/usr/share/APPLaunch/bin/czmuse-command",
+    "screen.show"
+  ],
   "required": {
-    "text": {"type": "string", "description": "The message to show on the screen."}
+    "text": {
+      "type": "string",
+      "description": "The message to show on the screen."
+    }
   },
   "timeout_ms": 10000
 }

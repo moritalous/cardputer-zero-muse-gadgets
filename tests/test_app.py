@@ -200,3 +200,26 @@ def test_help_key_opens_help():
     app = ChatApp(display, FakeMuse())
     app.tick(0.01)
     assert app.help_visible
+
+
+def test_notify_close_keeps_a_newer_socket(sock_dir):
+    path = sock_dir / "n.sock"
+    old = NotifyServer(path, lambda req: {"ok": True, "who": "old"})
+    old.start()
+    new = NotifyServer(path, lambda req: {"ok": True, "who": "new"})
+    new.start()          # replaces the old socket, like a second app instance
+    old.close()          # must not delete the new instance's socket
+    try:
+        assert send({"op": "ping"}, path)["who"] == "new"
+    finally:
+        new.close()
+    assert not path.exists()
+
+
+def test_default_socket_path_prefers_runtime_dir(monkeypatch):
+    from czmuse import notify
+    monkeypatch.delenv("CZMUSE_NOTIFY_SOCKET", raising=False)
+    path = notify.default_socket_path()
+    assert path.name.startswith("czmuse-notify")
+    monkeypatch.setenv("CZMUSE_NOTIFY_SOCKET", "/x/y.sock")
+    assert notify.default_socket_path() == Path("/x/y.sock")

@@ -1,5 +1,8 @@
 {
-  "description": "Read the CardputerZero's battery level and whether the Muse Gadget app is open on its screen.",
-  "exec": ["/usr/share/APPLaunch/bin/czmuse-command", "status.read"],
+  "description": "Read the CardputerZero's battery level (percent, charging status, voltage) and whether the Muse Gadget app is open on its screen. Prefer this over system.run when asked about the CardputerZero's battery.",
+  "exec": [
+    "/usr/share/APPLaunch/bin/czmuse-command",
+    "status.read"
+  ],
   "timeout_ms": 10000
 }

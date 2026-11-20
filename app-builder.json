@@ -1,6 +1,6 @@
 {
   "package_name": "cz-muse-gadget",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "app_name": "Muse Gadget",
   "bin_name": "cz-muse-gadget",
   "description": "Chat with your Muse from the CardputerZero keyboard and screen",

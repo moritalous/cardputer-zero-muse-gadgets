@@ -66,6 +66,7 @@ def main(argv=None) -> int:
         server = NotifyServer(args.notify_socket, app.handle_command)
         try:
             server.start()
+            print(f"czmuse: accepting custom commands on {args.notify_socket}", file=sys.stderr)
         except OSError as exc:
             print(f"czmuse: custom commands disabled ({exc})", file=sys.stderr)
             server = None
